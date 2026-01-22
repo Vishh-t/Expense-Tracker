@@ -1,0 +1,7 @@
+*.exe
+*.o
+*.out
+*.dat
+expenses.csv
+master_password.dat
+.vscode/
