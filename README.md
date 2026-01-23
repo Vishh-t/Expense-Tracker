@@ -55,7 +55,7 @@ A **Windows-based, console expense tracker** written in **C++** that helps users
 
 - 🔐 **Stronger encryption**
   - Replace XOR encryption with **AES** for secure data storage
-  - Use **Base64 encoding** to safely store binary encrypted data in text files
+    
 
 - 📊 **Advanced analytics**
   - Monthly category-wise charts
