@@ -13,7 +13,8 @@ A **Windows-based, console expense tracker** written in **C++** that helps users
 
 - 💾 **Persistent encrypted storage**
   - Expenses saved to file and auto-loaded on startup
-  - XOR-based encryption (educational purpose)
+  - Uses XOR-based obfuscation combined with Base64 encoding to ensure
+    safe storage and delimiter-safe file parsing
   - Delimiter-safe parsing (supports spaces in categories)
 
 - 🧾 **Expense management**

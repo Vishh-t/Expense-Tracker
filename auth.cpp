@@ -3,22 +3,81 @@
 
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
+static const string BASE64_CHARS =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    "abcdefghijklmnopqrstuvwxyz"
+    "0123456789+/";
+
+string base64_encode(const string &in)
+{
+    string out;
+    int val = 0, valb = -6;
+    for (unsigned char c : in)
+    {
+        val = (val << 8) + c;
+        valb += 8;
+        while (valb >= 0)
+        {
+            out.push_back(BASE64_CHARS[(val >> valb) & 0x3F]);
+            valb -= 6;
+        }
+    }
+    if (valb > -6)
+        out.push_back(BASE64_CHARS[((val << 8) >> (valb + 8)) & 0x3F]);
+    while (out.size() % 4)
+        out.push_back('=');
+    return out;
+}
+
+string base64_decode(const string &in)
+{
+    vector<int> T(256, -1);
+    for (int i = 0; i < 64; i++)
+        T[BASE64_CHARS[i]] = i;
+
+    string out;
+    int val = 0, valb = -8;
+    for (unsigned char c : in)
+    {
+        if (T[c] == -1)
+            break;
+        val = (val << 6) + T[c];
+        valb += 6;
+        if (valb >= 0)
+        {
+            out.push_back(char((val >> valb) & 0xFF));
+            valb -= 8;
+        }
+    }
+    return out;
+}
+
 string encrypt(string data)
 {
-    string key = "i_am_iron_man";
+    string key = "Xp3nseTr@cker_2026";
     for (size_t i = 0; i < data.length(); i++)
     {
         data[i] ^= key[i % key.length()];
     }
-    return data;
+    return base64_encode(data);
 }
 
 string decrypt(string data)
 {
-    return encrypt(data);
+    data = base64_decode(data);
+
+    string key = "Xp3nseTr@cker_2026";
+
+    for (size_t i = 0; i < data.length(); i++)
+    {
+        data[i] ^= key[i % key.length()];
+    }
+
+    return data;
 }
 
 string HashString(string &pass)
