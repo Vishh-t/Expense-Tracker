@@ -12,7 +12,7 @@ extern const WORD CYAN;
 extern const WORD RED;
 extern const WORD GREEN;
 extern const WORD WHITE;
-
+extern const WORD YELLOW; 
 
 void setColor(int color);
 WORD save_color();

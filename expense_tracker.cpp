@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <vector>
 #include <string>
+#include <iomanip>
 
 using namespace std;
 
@@ -61,7 +62,7 @@ bool expense_tracker::date_low_to_high(const expense &a, const expense &b)
 
 int expense_tracker::find_idx(int ID)
 {
-    for (int i = 0; i < expenses.size(); i++)
+    for (size_t i = 0; i < expenses.size(); i++)
     {
         if (expenses[i].ID == ID)
         {
@@ -680,18 +681,20 @@ void expense_tracker::financial_summary()
             cout << "Under Budget" << endl;
             setColor(oldColour);
         }
+
         else if (diff < 0)
         {
             WORD oldcolor = save_color();
             setColor(RED);
-            double percent = (-1 * diff * 100) / default_Budget;
-            cout << "Monthly Budget Exceeded by " << percent << "%" << endl;
+            double percent = (double)(-1 * diff * 100) / default_Budget;
+            cout << fixed << setprecision(2) << "Monthly Budget Exceeded by " << percent << "%" << endl;
             setColor(oldcolor);
         }
+
         else
         {
             WORD oldcolor = save_color();
-            setColor( FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+            setColor(YELLOW);
             cout << "Monthly Budget Reached" << endl;
             setColor(oldcolor);
         }
@@ -749,12 +752,21 @@ void expense_tracker::clear_all()
 
     if (ans == "yes")
     {
+        if (!Authenticate())
+        {
+            return;
+        }
         expenses.clear();
         record.clear();
         total = 0;
+        ID =1;
+        setColor(GREEN);
+        cout << "Data Cleared Successfully" << endl;
+        setColor(old);
         save_to_file();
         export_csv();
     }
+
     else
     {
         setColor(RED);
