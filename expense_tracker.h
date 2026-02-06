@@ -15,7 +15,6 @@ class expense_tracker
 public:
     expense_tracker();
 
-    
     void load_from_file();
     void run();
 
@@ -68,9 +67,11 @@ private:
     void search_by_amount(int amount);
     void search_by_category(string category);
     void search_by_date(string date);
+    void SearchinRangeforamount(int low, int high);
+    void SearchinRangefordate(string startDate, string endDate);
 
-    // ------------- SORTING -------------
-    void sort_amount_ascending();
+        // ------------- SORTING -------------
+        void sort_amount_ascending();
     void sort_amount_descending();
     void sort_category_ascending();
     void sort_date_ascending();

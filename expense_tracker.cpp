@@ -333,15 +333,17 @@ void expense_tracker::show_menu()
     cout << "  20 : Set Monthly Budget (Default = 5000)\n";
     setColor(old);
     cout << "  21 : View Financial Summary\n";
+    cout << "  22 : Search in range for amount \n";
+    cout << "  23 : search in range for date\n";
     setColor(RED);
-    cout << "  22 : Clear ALL Data\n";
+    cout << "  24 : Clear ALL Data\n";
     setColor(WHITE);
-    cout << "  23 : Change Master Password\n";
+    cout << "  25 : Change Master Password\n";
     setColor(old);
-    cout << "  24 : Export CSV\n";
-    cout << "  25 : Save to File\n";
+    cout << "  26 : Export CSV\n";
+    cout << "  27 : Save to File\n";
     setColor(RED);
-    cout << "  26 : Exit\n";
+    cout << "  28 : Exit\n";
     setColor(CYAN);
     cout << "============================================\n\n";
     setColor(old);
@@ -759,7 +761,7 @@ void expense_tracker::clear_all()
         expenses.clear();
         record.clear();
         total = 0;
-        ID =1;
+        ID = 1;
         setColor(GREEN);
         cout << "Data Cleared Successfully" << endl;
         setColor(old);
@@ -772,6 +774,57 @@ void expense_tracker::clear_all()
         setColor(RED);
         cout << "Cancelled.\n";
         setColor(old);
+    }
+}
+
+void expense_tracker::SearchinRangeforamount(int low, int high)
+{
+    WORD old = save_color();
+    for (auto p : expenses)
+    {
+        if (p.amount >= low && p.amount <= high)
+        {
+            cout << left
+                 << setw(8) << ("  " + to_string(p.ID))
+                 << setw(12) << p.amount
+                 << setw(18) << p.category
+                 << setw(15) << p.date << endl;
+        }
+    }
+}
+
+void expense_tracker::SearchinRangefordate(string startDate, string endDate)
+{
+    vector<expense> date = expenses;
+
+    date.push_back({1, "start", startDate, 1});
+    date.push_back({0, "end", endDate, 0});
+    sort(date.begin(), date.end(), date_low_to_high);
+    int i1 = -1, i2 = -1;
+    for (int i = 0; i < date.size(); i++)
+    {
+        if (date[i].date == startDate)
+        {
+            i1 = i;
+        }
+
+        if (date[i].date == endDate)
+        {
+            i2 = i;
+        }
+    }
+
+    for (int i = 0; i < date.size(); i++)
+    {
+        auto p = date[i];
+        if (i > i1 && i < i2 && p.category != "start" && p.category != "end")
+        {
+            cout << left
+                 << setw(8) << ("  " + to_string(p.ID))
+                 << setw(12) << p.amount
+                 << setw(18) << p.category
+                 << setw(15) << p.date << endl;
+        }
     }
 }
 
@@ -810,12 +863,20 @@ void expense_tracker::run()
             setColor(WHITE);
             cout << "Amount: ";
             setColor(old);
-            if (!get_int(amount) || amount <= 0)
+            bool runA = true;
+            while (runA)
             {
-                setColor(RED);
-                cout << "Invalid.\n";
-                setColor(old);
-                break;
+                if (!get_int(amount) || amount <= 0)
+                {
+                    setColor(RED);
+                    cout << "Invalid.\n";
+                    setColor(old);
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
             }
 
             do_ignore();
@@ -824,17 +885,21 @@ void expense_tracker::run()
             setColor(old);
             category = get_string();
 
-            setColor(WHITE);
-            cout << "Date: ";
-            setColor(old);
-            date = get_string();
-            if (!DateValidator(date))
+            bool runD = true;
+            while (runD)
             {
-                setColor(RED);
-                cout << "Invalid Date...\n";
-                cout << "Format must be DD/MM/YYYY\n";
-                setColor(old);
-                break;
+                if (!DateValidator(date))
+                {
+                    setColor(WHITE);
+                    cout << "Date: ";
+                    setColor(old);
+                    date = get_string();
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
             }
 
             Add_expense(amount, category, date);
@@ -887,6 +952,7 @@ void expense_tracker::run()
             count_expenses();
             break;
         }
+
         case 9:
         {
             int id, amount;
@@ -900,6 +966,7 @@ void expense_tracker::run()
                 setColor(RED);
                 cout << "Invalid.\n";
                 setColor(old);
+
                 break;
             }
 
@@ -921,6 +988,7 @@ void expense_tracker::run()
                 setColor(old);
                 break;
             }
+
             setColor(WHITE);
             cout << "ID to modify: ";
             setColor(old);
@@ -1063,29 +1131,103 @@ void expense_tracker::run()
             financial_summary();
             break;
         }
+
         case 22:
+        {
+            int samount, eamount;
+
+            while (true)
+            {
+                cout << "enter starting amount " << endl;
+                if (!get_int(samount))
+                {
+                    cout << "error" << endl;
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            while (true)
+            {
+                cout << "enter ending amount " << endl;
+                if (!get_int(eamount))
+                {
+                    cout << "error" << endl;
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            SearchinRangeforamount(samount, eamount);
+            break;
+        }
+
+        case 23:
+        {
+            string sdate, edate;
+            while (true)
+            {
+                cout << "enter start date : " << endl;
+                do_ignore();
+                sdate = get_string();
+                if (!DateValidator(sdate))
+                {
+                    cout << "error " << endl;
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            while (true)
+            {
+                cout << "enter end date : " << endl;
+                edate = get_string();
+                if (!DateValidator(edate))
+                {
+                    cout << "error " << endl;
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            SearchinRangefordate(sdate, edate);
+            break;
+        }
+        case 24:
         {
             clear_all();
             save_to_file();
             export_csv();
             break;
         }
-        case 23:
+        case 25:
         {
             ChangeMasterPassword();
             break;
         }
-        case 24:
+        case 26:
         {
             export_csv();
             break;
         }
-        case 25:
+        case 27:
         {
             save_to_file();
             break;
         }
-        case 26:
+        case 28:
         {
             running = false;
             save_to_file();
