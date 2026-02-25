@@ -5,3 +5,5 @@
 expenses.csv
 master_password.dat
 .vscode/
+.idea/
+cmake-build-debug/
